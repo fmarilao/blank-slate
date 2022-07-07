@@ -12,26 +12,47 @@ const InGame = () => {
     const { username, selectedWord } = useContext(PlayerContext);
 
     const words = ['___botellas', 'porta_____', 'abre_____', '_____magnetismo', 'en_________']
-    
     const guessWord = words[Math.floor(Math.random() * words.length)]
-     
+    const currRound = gameData.rounds.length;
+    const selectedWords = gameData[`selectedWords_${currRound}`];
+    const sent = selectedWords.find((w) => w.username === username);
+
+    const pending = gameData.players.filter((p)=> {
+        return !selectedWords.find((w) => w.username === p.username);
+    })
+
     const startGame = async () => {
-        await db.collection("games").doc(joinedGameId).update({started: true, guessWord: guessWord});
+        await db.collection("games")
+            .doc(joinedGameId).update({
+                started: true, 
+                rounds: [guessWord]
+            });
     }
 
     const sendWord = async () => {
-        await db.collection("games").doc(joinedGameId).update({
-            selectedWords: firebase.firestore.FieldValue.arrayUnion({ 
-              username: username,
-              selectedWord,
-            })
-        });;
+        if (!sent) {
+            await db.collection("games").doc(joinedGameId).update({
+                [`selectedWords_${currRound}`]: firebase.firestore.FieldValue.arrayUnion({ 
+                  username: username,
+                  selectedWord,
+                })
+            });
+        }
     }
+
     if (gameData.started) { 
-        return <Turno id={joinedGameId} players={gameData.players} guessWord={guessWord} onUpdate={sendWord} />;
-    }
-    if (gameData.results) { 
-        return <Results id={joinedGameId} players={gameData.players} onStart={startGame} />;
+        if (pending.length) {
+            const currWord = gameData.rounds[gameData.rounds.length - 1];
+            return <Turno 
+                id={joinedGameId} 
+                players={gameData.players}
+                guessWord={currWord}
+                sent={!!sent}
+                selected={selectedWords}
+                onUpdate={sendWord} />;   
+        } else {
+            return <Results id={joinedGameId} players={gameData.players} onStart={startGame} />;
+        }
     }
     return <Lobby id={joinedGameId} players={gameData.players} onStart={startGame} />;
 }
