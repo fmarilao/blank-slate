@@ -1,16 +1,11 @@
-import firebaseConfig from './firebaseConfig.json';
-// Import the functions you need from the SDKs you need
-import firebase from "firebase/app";
-import "firebase/firestore";
-import { useEffect, useRef } from 'react';
-import Principal from './components/Principal';
+import { useContext, useEffect, useRef } from 'react';
+import Principal from './components/Principal'
+import FirestoreContext from './context/FirestoreContext';
 
 // Initialize Firebase
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-
 function App() {
-  const subscription = useRef();
+  const { joinedGameId } = useContext(FirestoreContext);
+  /* const subscription = useRef();
   const subscribeToFirestore = async () => {
     if (subscription.current) return;
     const gamesDb = db.collection("games");
@@ -21,11 +16,12 @@ function App() {
 
   useEffect(() => {
     subscribeToFirestore();
-  }, []);
+  }, []); */
 
   return (
     <div>
-      <Principal />
+      {joinedGameId ? <div>Game Id: {joinedGameId}</div> : 
+      <Principal /> }
     </div>
   );
 }
