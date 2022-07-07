@@ -1,0 +1,17 @@
+.players { 
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.player {
+    padding: 20px;
+}
+
+img {
+    width: 100px;
+}
+
+.button {
+    text-align: center;
+}

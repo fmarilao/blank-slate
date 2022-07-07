@@ -5,11 +5,15 @@ import Lobby from './Lobby';
 import Turno from './Turno';
 
 const InGame = () => {
-    const { joinedGameId, gameData } = useContext(FirestoreContext);
+    const { db, joinedGameId, gameData } = useContext(FirestoreContext);
+
+    const startGame = async () => {
+        await db.collection("games").doc(joinedGameId).update({started: true});
+    }
     if (gameData.started) { 
         return <Turno />;
     }
-    return <Lobby id={joinedGameId} players={gameData.players} />;
+    return <Lobby id={joinedGameId} players={gameData.players} onStart={startGame} />;
 }
 
 export default InGame;

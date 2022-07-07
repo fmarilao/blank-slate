@@ -3,6 +3,7 @@ import './Principal.css';
 import Modal from "react-modal";
 import firebase from "firebase/app";
 import FirestoreContext from '../context/FirestoreContext';
+import PlayerContext from '../context/PlayerContext';
 
 const avatars = [
   "https://robohash.org/sitquibusdamautem.png?size=100x100&set=set1",
@@ -19,6 +20,7 @@ const Principal = () => {
   const [user, setUser] = useState();
   const [gameId, setGameId] = useState();
   const { db, setJoinedGameId } = useContext(FirestoreContext);
+  const { setUsername } = useContext(PlayerContext);
 
   const startGame = async () => {
     const res = await db
@@ -27,13 +29,17 @@ const Principal = () => {
         players: [{ username: user, avatar, creator: true }], 
         started: false
       });
+    setUsername(user);
     setJoinedGameId(res.id);
   };
 
   const joinGame = async () => {
     const res = await db.collection("games").doc(gameId).get();
+    const inGame = res.data().players.find((player) => player.username === user);
+    console.log("inGame", inGame)
     if(res.exists) {
-      await db
+      if(!inGame) {
+        await db
         .collection('games')
         .doc(gameId)
         .update({
@@ -41,6 +47,8 @@ const Principal = () => {
             username: user, avatar, creator: false
           })
         });
+      }
+      setUsername(user);
       setJoinedGameId(gameId);
     } else {
       alert("Invalid Game Id")

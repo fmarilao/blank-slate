@@ -3,14 +3,17 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import {FirestoreContextProvider} from './context/FirestoreContext';
+import { FirestoreContextProvider } from './context/FirestoreContext';
+import { PlayerContextProvider } from './context/PlayerContext';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <FirestoreContextProvider>
-      <App />
-    </FirestoreContextProvider>
+    <PlayerContextProvider>
+      <FirestoreContextProvider>
+        <App />
+      </FirestoreContextProvider>
+    </PlayerContextProvider>
   </React.StrictMode>
 );
 
