@@ -1,6 +1,7 @@
 import React, { useContext, useState } from 'react'
 import './Principal.css';
 import Modal from "react-modal";
+import firebase from "firebase/app";
 import FirestoreContext from '../context/FirestoreContext';
 
 const avatars = [
@@ -22,14 +23,24 @@ const Principal = () => {
   const startGame = async () => {
     const res = await db
       .collection('games')
-      .add({ players: [{ username: user, avatar, creator: true }]});
+      .add({
+        players: [{ username: user, avatar, creator: true }], 
+        started: false
+      });
     setJoinedGameId(res.id);
   };
 
   const joinGame = async () => {
-    const res = await db.collection("games")
-    .doc(gameId).get();
+    const res = await db.collection("games").doc(gameId).get();
     if(res.exists) {
+      await db
+        .collection('games')
+        .doc(gameId)
+        .update({
+          players: firebase.firestore.FieldValue.arrayUnion({ 
+            username: user, avatar, creator: false
+          })
+        });
       setJoinedGameId(gameId);
     } else {
       alert("Invalid Game Id")
