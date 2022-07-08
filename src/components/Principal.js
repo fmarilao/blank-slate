@@ -27,7 +27,8 @@ const Principal = () => {
       .collection('games')
       .add({
         players: [{ username: user, avatar, creator: true }], 
-        started: false
+        started: false,
+        rounds: []
       });
     setUsername(user);
     setJoinedGameId(res.id);

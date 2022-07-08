@@ -11,7 +11,7 @@ const InGame = () => {
     const { db, joinedGameId, gameData } = useContext(FirestoreContext);
     const { username, selectedWord} = useContext(PlayerContext);
 
-    const currRound = gameData.rounds.length;
+    const currRound = gameData?.rounds?.length;
     const words = ['___botellas', 'abre_____', 'en_________', 'porta_____',  '_____magnetismo']
 
     //guardamos en selectedwords lo que nos devuelve firestore con el array de usuarios y sus palabras elegidas
