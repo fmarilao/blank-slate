@@ -36,7 +36,7 @@ const Turno = ({ id, players, guessWord, sent, onUpdate, selected }) => {
         <input
           type="text"
           value={selectedWord}
-          onChange={(e) => setSelectedWord}
+          onChange={(e) => setSelectedWord(e.target.value)}
         />
         <button
           type="button"
