@@ -1,0 +1,13 @@
+.Main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.Wrapper {
+}
+
+h3 {
+    margin-right: 10px;
+}

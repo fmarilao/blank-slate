@@ -13,7 +13,7 @@ const InGame = () => {
 
     const currRound = gameData.rounds.length;
     const words = ['___botellas', 'abre_____', 'en_________', 'porta_____',  '_____magnetismo']
-    
+
     //guardamos en selectedwords lo que nos devuelve firestore con el array de usuarios y sus palabras elegidas
     const selectedWords = gameData[`selectedWords_${currRound}`];
 
@@ -43,7 +43,6 @@ const InGame = () => {
                 });
         }
     }
-  
     const sendWord = async () => {
         // si no envio aun la palabra dejamos enviar
         if (!sent) {
@@ -55,6 +54,10 @@ const InGame = () => {
                 })
             });
         }
+    }
+
+    if(gameData.ended) {
+        return <div>FIN {currRound} {words.length}</div>
     }
 
     if (gameData.started) {
@@ -70,7 +73,7 @@ const InGame = () => {
         } else {
             return <Results 
              guessWord={currWord}
-            />
+             onStart={startGame} />;
         }
     }
     return <Lobby id={joinedGameId} players={gameData.players} onStart={startGame} />;

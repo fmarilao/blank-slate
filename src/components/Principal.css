@@ -1,18 +1,18 @@
 .App {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-  }
-
-.Wrapper {
   display: flex;
   flex-direction: column;
+  align-items: center;
   text-align: center;
-  margin-bottom: 50px;
+}
+
+.Wrapper {
+display: flex;
+flex-direction: column;
+text-align: center;
+margin-bottom: 50px;
 }
 
 .Selected {
-  border: 3px solid blue;
-  border-radius: 50%;
+border: 3px solid blue;
+border-radius: 50%;
 }
