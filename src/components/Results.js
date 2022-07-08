@@ -1,38 +1,76 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
+import FirestoreContext from "../context/FirestoreContext";
 import PlayerContext from "../context/PlayerContext";
 import "./Results.css";
 
-const Results = ({ id, players, onStart }) => {
+const Results = ({ onStart, guessWord }) => {
     //facu1111
     // IdrXCDuWCawETlVMPlh8
     const { username } = useContext(PlayerContext);
+    const { joinedGameId, gameData } = useContext(FirestoreContext);
+    const { players } = gameData;
     const currPlayer = players.find((player) => player.username === username);
+    const [scores, setScores] = useState({});
+    const [globals, setGlobals] = useState({});
+
+    const currRound = gameData.rounds.length;
+    const lastRound = gameData[`selectedWords_${currRound}`];
+
+    const getRoundScores = (round) => {
+      const results = {};
+      const selected = gameData[`selectedWords_${round}`];
+      selected.forEach(({ selectedWord}) => {
+        if(selectedWord in results) results[selectedWord]++;
+        else results[selectedWord] = 1;
+      });
+
+      // En base a las coincidencias, calculamos el score de cada user
+      const scores = {};
+      selected.forEach(({ selectedWord, username}) => {
+        let wordPoints = 0;
+        if (results[selectedWord] > 2) { 
+          wordPoints = 1;
+        }
+        if (results[selectedWord] === 2) {
+          wordPoints = 3;
+        }
+        scores[username] = wordPoints;
+      });
+      return scores;
+    }
+
+    useEffect(() => {
+      // Contamos cuantas veces aparece cada palabra en las selected words
+      const scores = getRoundScores(currRound);
+      setScores(scores)
+
+      const globalScore = getRoundScores(currRound);
+      for (let i = 1; i < currRound; i++) {
+        const s = getRoundScores(i);
+        Object.keys(s).forEach((uname) => {
+          globalScore[uname] += s[uname];
+        })
+      }
+      setGlobals(globalScore);
+    }, []);
+
     return (
       <div className="Main">
         <div>
           <h2>Turno</h2>
-          <div className="Wrapper">
+          <div>
             <h3>game id:</h3>
-            <p>{id}</p>
+            <p>{joinedGameId}</p>
           </div>
-          <div className="Wrapper">
+          <div>
             <h3>online players:</h3>
             <p>{players.length}</p>
           </div>
         </div>
-        <div className="Wrapper">
-          <p>la palabra era: {}</p>
+        <div>
+          <p>la palabra era: {guessWord}</p>
         </div>
         <div>
-          {currPlayer.creator ? (
-            <button type="button" onClick={onStart}>
-              Iniciar
-            </button>
-          ) : (
-            <div>Esperando al creador del juego a que inicie</div>
-          )}
-        </div>
-        <div className="Wrapper">
           <h2>Estado de respuestas:</h2>
           <div>
             <table>
@@ -45,34 +83,36 @@ const Results = ({ id, players, onStart }) => {
                 </tr>
               </thead>
               <tbody>
-                {players.map((r, i) => (
-                  <tr key={i}>
-                    <td className="px-3 py-3" key={i}>
-                      {players[i].username}
-                    </td>
-                    <td className="px-3 py-3" key={i}>
-                      {players[i].username}
-                    </td>
-                    <td className="px-3 py-3" key={i}>
-                      {players[i].username}
-                    </td>
-                    <td className="px-3 py-3" key={i}>
-                      {players[i].username}
-                    </td>
-                  </tr>
-                ))}
+                {lastRound.map((r, i) => { 
+                  return (
+                    <tr key={i}>
+                      <td className="px-3 py-3" key={i}>
+                        {lastRound[i].username}
+                      </td>
+                      <td className="px-3 py-3" key={i}>
+                        {globals[lastRound[i].username]}
+                      </td>
+                      <td className="px-3 py-3" key={i}>
+                        {scores[lastRound[i].username]}
+                      </td>
+                      <td className="px-3 py-3" key={i}>
+                        {lastRound[i].selectedWord}
+                      </td>
+                    </tr>
+                  )}
+                )}
               </tbody>
             </table>
           </div>
-          {currPlayer.creator ? (
-            <div className="Wrapper">
-              <div>
-                <button type="button" onClick={() => {}}>
-                  Nuevo Juego
-                </button>
-              </div>
-            </div>
-          ) : null}
+          <div>
+            {currPlayer.creator ? (
+              <button type="button" onClick={onStart}>
+                Siguiente Ronda
+              </button>
+            ) : (
+              <div>Esperando al creador del juego a que inicie la siguiente ronda</div>
+            )}
+          </div>
         </div>
       </div>
     );

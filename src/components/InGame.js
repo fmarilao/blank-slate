@@ -11,22 +11,30 @@ const InGame = () => {
     const { db, joinedGameId, gameData } = useContext(FirestoreContext);
     const { username, selectedWord } = useContext(PlayerContext);
 
-    const words = ['___botellas', 'porta_____', 'abre_____', '_____magnetismo', 'en_________']
-    const guessWord = words[Math.floor(Math.random() * words.length)]
     const currRound = gameData.rounds.length;
+    const words = ['___botellas', 'abre_____', 'en_________', 'porta_____',  '_____magnetismo']
+    
     const selectedWords = gameData[`selectedWords_${currRound}`];
-    const sent = selectedWords.find((w) => w.username === username);
+    const sent = selectedWords?.find((w) => w.username === username);
 
     const pending = gameData.players.filter((p)=> {
-        return !selectedWords.find((w) => w.username === p.username);
+        return !selectedWords?.find((w) => w.username === p.username);
     })
 
     const startGame = async () => {
-        await db.collection("games")
+        if (currRound === words.length) {
+            await db.collection("games")
             .doc(joinedGameId).update({
-                started: true, 
-                rounds: [guessWord]
+                ended: true, 
             });
+        } else {
+            const guessWord = words[currRound];
+            await db.collection("games")
+                .doc(joinedGameId).update({
+                    started: true, 
+                    rounds: firebase.firestore.FieldValue.arrayUnion(guessWord)
+                });
+        }
     }
 
     const sendWord = async () => {
@@ -40,9 +48,13 @@ const InGame = () => {
         }
     }
 
+    if(gameData.ended) {
+        return <div>FIN {currRound} {words.length}</div>
+    }
+
     if (gameData.started) { 
+        const currWord = gameData.rounds[gameData.rounds.length - 1];
         if (pending.length) {
-            const currWord = gameData.rounds[gameData.rounds.length - 1];
             return <Turno 
                 id={joinedGameId} 
                 players={gameData.players}
@@ -51,7 +63,9 @@ const InGame = () => {
                 selected={selectedWords}
                 onUpdate={sendWord} />;   
         } else {
-            return <Results id={joinedGameId} players={gameData.players} onStart={startGame} />;
+            return <Results 
+                guessWord={currWord}
+                onStart={startGame} />;
         }
     }
     return <Lobby id={joinedGameId} players={gameData.players} onStart={startGame} />;
