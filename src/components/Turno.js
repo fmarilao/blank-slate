@@ -20,30 +20,31 @@ const Turno = ({ id, players, guessWord, onUpdate, sent, selected }) => {
   return (
     <div className="Main">
       <div>
-        <h2>Turno</h2>
+        <h2>Round</h2>
         <div>
-          <h3>game id:</h3>
+          <h3>Game id:</h3>
           <p>{id}</p>
         </div>
         <div>
-          <h3>online players:</h3>
+          <h3>Online Players:</h3>
           <p>{players.length}</p>
         </div>
       </div>
       <div>
-        <p>la palabra a completar es: {guessWord}</p>
+        <p>WORD:</p>
+        <h1>{guessWord}</h1>
       </div>
         { !sent ? 
         (
           <div>
-            <p>ingresa tu palabra</p>
+            <p>complete your word</p>
             <input
               type="text"
               value={selectedWord}
               onChange={(e) => setSelectedWord(e.target.value)}
             />
             <button type="button" onClick={onUpdate}>
-              Enviar
+              Send
             </button>
           </div>
         ) : renderPlayerStatus() }

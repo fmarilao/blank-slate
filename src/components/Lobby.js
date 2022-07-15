@@ -27,8 +27,8 @@ const Lobby = ({ id, players, onStart }) => {
             </div>
             <div className="button">
                 {currPlayer.creator ?
-                    <button type="button" onClick={onStart}>Iniciar</button> :
-                    <div>Esperando al creador del juego a que inicie</div>
+                    <button type="button" onClick={onStart}>Start</button> :
+                    <div>Please wait... Creator is starting the game</div>
                 }
             </div> 
         </div>

@@ -55,29 +55,29 @@ const Results = ({ onStart, guessWord }) => {
     return (
       <div className="Main">
         <div>
-          <h2>Resultado</h2>
+          <h2>Results</h2>
           <div>
-            <h3>game id:</h3>
+            <h3>Game id:</h3>
             <p>{joinedGameId}</p>
           </div>
           <div>
-            <h3>online players:</h3>
+            <h3>Online players:</h3>
             <p>{players.length}</p>
           </div>
         </div>
         <div>
-          <p>la palabra era: {guessWord}</p>
+          <p>WORD: {guessWord}</p>
         </div>
         <div>
-          <h2>Estado de las respuestas:</h2>
+          <h2>User points:</h2>
           <div>
             <table>
               <thead>
                 <tr>
                   <th>Username</th>
-                  <th>Puntos actuales</th>
-                  <th>Puntos Obtenidos</th>
-                  <th>Palabra elegida</th>
+                  <th>Round Points</th>
+                  <th>Total Points</th>
+                  <th>Chosen Word</th>
                 </tr>
               </thead>
               <tbody>
@@ -105,10 +105,10 @@ const Results = ({ onStart, guessWord }) => {
           <div>
             {currPlayer.creator ? (
               <button type="button" onClick={onStart}>
-                Siguiente Ronda
+                Next
               </button>
             ) : (
-              <div>Esperando al creador del juego a que inicie la siguiente ronda</div>
+              <div>Please wait... Creator is starting the next round</div>
             )}
           </div>
         </div>

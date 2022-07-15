@@ -8,7 +8,7 @@ function App() {
   const { joinedGameId, gameData } = useContext(FirestoreContext);
 
   if (joinedGameId && !gameData) {
-    return <div>Cargando...</div>;
+    return <div>Loading...</div>;
   }
   
   return (
